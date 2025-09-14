@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant User
+  participant PhoneApp as "Phone (Clay)"
+  participant Watch
+  participant Storage
+  User->>PhoneApp: Select timezone / colors
+  PhoneApp->>Watch: send AppMessage (timezone/color keys)
+  Watch->>Watch: inbox_received_callback
+  Watch->>Storage: persist_write_* for each key
+  Watch->>Watch: update_time_display()
+  Watch-->>PhoneApp: outbox_sent (optional ack)

@@ -1,0 +1,13 @@
+flowchart LR
+  PhoneApp["Phone App (Clay)"] -->|AppMessage| Watch["Watch (C App)"]
+  Watch -->|Persist| Storage[(Persistent Storage)]
+  Watch -->|Tick| TimeLib[(system time / localtime/gmtime)]
+  Watch -->|Accel Tap| Accel["Accelerometer Service"]
+  Watch -->|Display| Screen[TextLayers]
+  subgraph Platforms
+    Basalt(Basalt)
+    Chalk(Chalk)
+    Diorite(Diorite)
+    Emery(Emery)
+  end
+  Watch --> Platforms

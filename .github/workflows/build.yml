@@ -1,0 +1,89 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: watch-face/package-lock.json
+        
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: '3.10'
+        activate-environment: pebble-env
+        environment-file: environment.yml
+        auto-activate-base: false
+    
+    - name: Install Pebble SDK dependencies
+      shell: bash -l {0}
+      run: |
+        conda activate pebble-env
+        sudo apt-get update
+        # Install required system packages per Rebble SDK docs
+        sudo apt-get install -y python3-pip python3-venv nodejs npm libsdl1.2debian libfdt1
+        
+    - name: Set up Pebble CLI
+      shell: bash -l {0}
+      run: |
+        conda activate pebble-env
+        # Install ARM toolchain
+        sudo apt-get install -y gcc-arm-none-eabi build-essential
+
+        # Install uv (fast package manager) and use it to install pebble-tool per Rebble docs
+        python3 -m pip install --user uv
+        export PATH="$HOME/.local/bin:$PATH"
+        # ensure uv is on PATH for subsequent steps
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        uv tool install pebble-tool
+        # pebble command should now be available via $HOME/.local/bin
+        
+    - name: Install Node.js dependencies
+      working-directory: ./watch-face
+      shell: bash -l {0}
+      run: |
+        conda activate pebble-env
+        npm ci
+      
+    - name: Build watch face
+      working-directory: ./watch-face
+      shell: bash -l {0}
+      run: |
+        conda activate pebble-env
+        export PATH="$HOME/.local/bin:$PATH"
+        pebble build
+        
+    - name: Verify build artifacts
+      run: |
+        echo "Build completed for all platforms:"
+        ls -la watch-face/build/
+        find watch-face/build/ -name "*.pbw" -exec ls -la {} \;
+        
+    - name: Run tests (if any)
+      working-directory: ./watch-face
+      run: |
+        # Add test commands here when tests are available
+        echo "No tests configured yet"
+        
+    - name: Upload build artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pebble-build-artifacts
+        path: |
+          watch-face/build/
+          watch-face/*.pbw
+        retention-days: 30

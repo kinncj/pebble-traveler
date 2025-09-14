@@ -1,0 +1,46 @@
+{
+  "name": "timezonetraveler",
+  "author": "kinncj",
+  "version": "4.0.0",
+  "description": "Timezone Traveler - configurable multi-timezone Pebble watch face with GMT offsets and color customization.",
+  "homepage": "https://github.com/kinncj/pebble-traveler",
+  "keywords": ["pebble-app"],
+  "private": false,
+  "dependencies": {
+    "pebble-clay": "^1.0.4"
+  },
+  "pebble": {
+    "displayName": "Timezone Traveler",
+    "uuid": "dde827d7-fb2c-4e44-b11b-e45d4c27f4fa",
+    "sdkVersion": "3",
+      "enableMultiJS": true,
+      "targetPlatforms": [
+        "basalt",
+        "chalk", 
+        "diorite",
+        "emery"
+      ],
+      "watchapp": {
+        "watchface": true
+      },
+    "versionLabel": "4.0.0",
+    "versionCode": 2,
+    "messageKeys": [
+      "HOME",
+      "TIMEZONE_1",
+      "TIMEZONE_2", 
+      "TIMEZONE_3",
+      "TIMEZONE_4",
+      "ALWAYS_SHOW_HOME",
+      "BACKGROUND_COLOR",
+      "TIME_COLOR",
+      "TIMEZONE_LABEL_COLOR",
+      "HOME_TIME_COLOR",
+      "SHOW_SECONDS",
+      "SHOW_HOME_SECONDS"
+    ],
+    "resources": {
+      "media": []
+    }
+  }
+}
